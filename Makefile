@@ -1,13 +1,27 @@
-SRCS	=
+SRCS	= main.c	gnl/get_next_line.c gnl/get_next_line_utils.c	utils.c map_utils.c putting_function.c	commands.c
 
-OBJS	=
+OBJS	= $(SRCS:.c=.o)
 
-NAME	=	fdf.a
+NAME	=	so_long
+
+CC		=	gcc
+
+CFLAG	=	-Wall -Wextra -Werror -o3
 
 all:	$(NAME)
 
 %.o: %.c
-	cc -Wall -Wextra -Werror -Imlx -c $< -o $@
+	$(CC) $(CFLAG) -D BUFFER_SIZE=42 -Imlx -c $< -o $@
 
 $(NAME): $(OBJS)
-	cc $(OBJS) -Lmlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
+	$(CC) $(CFLAG) $(OBJS) -Lmlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
+
+fclean: clean
+	rm -rf $(NAME)
+
+clean:
+	rm -rf $(OBJS)
+
+re:	fclean all
+
+.PHONY: re fclean all clean
