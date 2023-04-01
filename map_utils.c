@@ -64,6 +64,7 @@ void	get_col(t_map *map, char *line, int fd)
 		map->map[++i] = (char *) malloc(sizeof(char) * map->col);
 		while (line[++j])
 			map->map[i][j] = line[j];
+		free(line);
 		line = get_next_line(fd);
 	}
 }
@@ -75,12 +76,15 @@ int	get_map(t_map *map, char *str)
 
 	fd = open(str, O_RDONLY);
 	line = get_next_line(fd);
+	if (!line)
+		return (0);
 	map->col = ft_strlen(line) - 1;
 	while (line != NULL)
 	{
 		map->rig++;
 		if (ft_strlen(line) - 1 != map->col && ft_strlen(line) != map->col)
 			return (0);
+		free(line);
 		line = get_next_line(fd);
 	}
 	map->map = (char **) malloc(sizeof(char *) * map->rig);

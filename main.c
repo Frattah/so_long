@@ -12,6 +12,16 @@
 
 #include "so_long.h"
 
+void	start_game(t_vrs *vrs)
+{
+	vrs->mlx = mlx_init();
+	vrs->win = mlx_new_window(vrs->mlx, vrs->map.col * 64,
+			(vrs->map.rig + 2) * 64, "Game");
+	render_map(vrs);
+	mlx_hook(vrs->win, 2, 1L << 0, command, vrs);
+	mlx_loop(vrs->mlx);
+}
+
 void	vrs_init(t_vrs *vrs)
 {
 	vrs->ply.collect = 0;
@@ -36,22 +46,20 @@ int	main(int argc, char **str)
 
 	if (argc != 2)
 	{
+		write(2, "Error\n", 6);
 		write(1, "Invalid Number of parameters\n", 29);
 		exit(1);
 	}
 	vrs_init(&vrs);
 	tmp = get_map(&vrs.map, str[1]);
-	if (!tmp || !is_valid(&vrs.map))
+	if (!tmp || !is_valid(&vrs.map)
+		|| ft_strncmp(str[1] + ft_strlen(str[1]) - 4, ".ber", 4))
 	{
 		free(vrs.ply.xpm);
 		free_map(&vrs.map, tmp);
-		write(1, "Error\n", 6);
+		write(2, "Error\n", 6);
+		write(1, "Invalid or absent map\n", 23);
 		exit(0);
 	}
-	vrs.mlx = mlx_init();
-	vrs.win = mlx_new_window(vrs.mlx, vrs.map.col * 64,
-			(vrs.map.rig + 2) * 64, "Game");
-	render_map(&vrs);
-	mlx_hook(vrs.win, 2, 1L << 0, command, &vrs);
-	mlx_loop(vrs.mlx);
+	start_game(&vrs);
 }
